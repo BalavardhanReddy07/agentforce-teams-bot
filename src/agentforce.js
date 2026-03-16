@@ -4,7 +4,6 @@ require("dotenv").config();
 const SF_TOKEN_URL = `${process.env.SF_ORG_DOMAIN}/services/oauth2/token`;
 const SF_AGENT_URL = `https://api.salesforce.com/einstein/ai-agent/v1`;
 
-// Step 1 - Get Salesforce Access Token
 async function getAccessToken() {
   const params = new URLSearchParams();
   params.append("grant_type", "client_credentials");
@@ -20,7 +19,6 @@ async function getAccessToken() {
   return data.access_token;
 }
 
-// Step 2 - Start Agentforce Session
 async function startSession(token) {
   const response = await fetch(
     `${SF_AGENT_URL}/agents/${process.env.SF_AGENT_ID}/sessions`,
@@ -47,7 +45,6 @@ async function startSession(token) {
   return data.sessionId;
 }
 
-// Step 3 - Send Message to Agentforce & Get Response
 async function sendMessage(token, sessionId, userMessage) {
   const response = await fetch(
     `${SF_AGENT_URL}/sessions/${sessionId}/messages/stream`,
@@ -69,7 +66,6 @@ async function sendMessage(token, sessionId, userMessage) {
     }
   );
 
-  // Parse SSE Streaming Response
   const text = await response.text();
   const lines = text.split("\n");
   let finalMessage = "";
@@ -88,7 +84,6 @@ async function sendMessage(token, sessionId, userMessage) {
   return finalMessage || "I'm sorry, I could not process your request.";
 }
 
-// Step 4 - End Agentforce Session
 async function endSession(token, sessionId) {
   await fetch(`${SF_AGENT_URL}/sessions/${sessionId}`, {
     method: "DELETE",
