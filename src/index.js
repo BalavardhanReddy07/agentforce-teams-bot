@@ -15,8 +15,7 @@ const {
   endSession,
 } = require("./agentforce");
 
-require("dotenv").config();
-
+require("dotenv").config({ path: require("path").resolve(__dirname, "../.env") });
 const app = express();
 app.use(express.json());
 
@@ -54,11 +53,13 @@ app.post("/api/messages", (req, res) => {
         await context.sendActivity(agentResponse);
 
       } catch (error) {
-        console.error("Error:", error);
-        await context.sendActivity(
-          "Sorry, I could not connect to Agentforce. Please try again."
-        );
-      }
+          console.error("Full Error:", JSON.stringify(error, null, 2));
+          console.error("Error Message:", error.message);
+          console.error("Error Stack:", error.stack);
+          await context.sendActivity(
+            `Error: ${error.message}`
+          );
+        }
     }
 
     if (

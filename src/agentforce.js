@@ -1,5 +1,7 @@
-const fetch = require("node-fetch");
-require("dotenv").config();
+require("dotenv").config({ path: require("path").resolve(__dirname, "../.env") });
+
+const fetch = (...args) =>
+  import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
 const SF_TOKEN_URL = `${process.env.SF_ORG_DOMAIN}/services/oauth2/token`;
 const SF_AGENT_URL = `https://api.salesforce.com/einstein/ai-agent/v1`;
