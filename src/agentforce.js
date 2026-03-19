@@ -76,6 +76,11 @@ async function sendMessage(token, sessionId, userMessage) {
     if (line.startsWith("data:")) {
       try {
         const json = JSON.parse(line.replace("data:", "").trim());
+        // Handle TEXT_CHUNK events
+        if (json.message?.type === "TextChunk") {
+          finalMessage += json.message.message;
+        }
+        // Handle Inform events (fallback)
         if (json.message?.type === "Inform") {
           finalMessage = json.message.message;
         }
